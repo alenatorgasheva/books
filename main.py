@@ -65,8 +65,33 @@ def count_book_by_year(year, data_books):
     return counter
 
 
+def publishers(data_books):
+    data_publishers = {}
+    for i in data_books:
+        publisher = data_books[i]['Publisher']
+        price = float(data_books[i]['Price'])
+        if publisher not in data_publishers:
+            data_publishers[publisher] = {}
+            data_publishers[publisher]['Count'] = 1
+            data_publishers[publisher]['Price'] = price
+        else:
+            data_publishers[publisher]['Count'] += 1
+            data_publishers[publisher]['Price'] += price
+
+    average_price(data_publishers)
+
+
+def average_price(data_publishers):
+    for publisher in data_publishers:
+        price = data_publishers[publisher]['Price']
+        count = data_publishers[publisher]['Count']
+        average = price / count
+        print('{}: {:.2f}'.format(publisher, average))
+
+
 def main():
     data_books = reading_data()
+    publishers(data_books)
 
 
 main()
