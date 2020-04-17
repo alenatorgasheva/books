@@ -1,6 +1,6 @@
 # Project 10.
 
-# This program ...
+# This program works with XML file which contains information about books.
 
 # Developed by Torgasheva A.
 
@@ -44,17 +44,21 @@ def find_book_by(key, value, data_books):
     for book_number in data_books:
         book_i = data_books[book_number][key]
         if book_i == value:
-            print_data(data_books[book_number])
+            print_data(key, data_books[book_number])
+            return
+    print(lc.TXT_FIND_BOOK_BY.format(key, value))
 
 
-def print_data(data_book):
+def print_data(exception, data_book):
     """
     Printing data about book
+    :param exception: key that mustn't be output
     :param data_book: dictionary with data about books
     :return: None
     """
     for key in data_book:
-        print('{0:}: {1:}'.format(key, data_book[key]))
+        if key != exception:
+            print('{}: {}'.format(key, data_book[key]))
 
 
 def count_book_by_year(year, data_books):
@@ -69,10 +73,10 @@ def count_book_by_year(year, data_books):
         book_year = data_books[book_number]['Year_of_publishing']
         if book_year == year:
             counter += 1
-    return counter
+    print(lc.TXT_COUNT_BOOK_BY_YEAR.format(year, counter))
 
 
-def publishers(data_books):
+def average_price(data_books):
     """
     Finding the total price of all books and their number for each publisher.
     :param data_books: dictionary with data about books
@@ -90,10 +94,10 @@ def publishers(data_books):
             data_publishers[publisher]['Count'] += 1
             data_publishers[publisher]['Price'] += price
 
-    average_price(data_publishers)
+    print_average_price(data_publishers)
 
 
-def average_price(data_publishers):
+def print_average_price(data_publishers):
     """
     Counting and printing average price of all books for each publisher.
     :param data_publishers: dictionary with data about prices for each publisher
@@ -128,7 +132,8 @@ def most_expensive(publisher, year, data_books):
             elif price == expensive_books[0]['Price']:
                 expensive_books.append(data_books[book_number])
 
-    print_most_expensive(expensive_books)
+    if print_most_expensive(expensive_books):
+        print(lc.TXT_NO_INFORMATION.format(publisher, year))
 
 
 def print_most_expensive(expensive_books):
@@ -137,19 +142,83 @@ def print_most_expensive(expensive_books):
     :param expensive_books: list of the most expensive books
     :return: None
     """
-    for book in expensive_books:
-        for key in book:
-            if key != 'Publisher' and key != 'Year_of_publishing':
-                print('{}: {}'.format(key, book[key]))
-        print()
+    if expensive_books:
+        for book in expensive_books:
+            print()
+            for key in book:
+                if key != 'Publisher' and key != 'Year_of_publishing':
+                    print('{}: {}'.format(key, book[key]))
+        return False
+    else:
+        return True
 
 
 def main():
     data_books = reading_data()
-    print(data_books)
-    publisher = input()
-    year = int(input())
-    most_expensive(publisher, year, data_books)
+    while True:
+        while True:
+            print(lc.TXT_CHOOSE)
+            print(lc.TXT_MENU)
+            answer = input()
+            print('-' * 100)
+            if answer == '1':
+                print(lc.TXT_ID, end=' ')
+                book_id = input()
+                find_book_by('id', book_id, data_books)
+                break
 
+            elif answer == '2':
+                print(lc.TXT_ISBN, end=' ')
+                book_ISBN = input()
+                find_book_by('ISBN', book_ISBN, data_books)
+                break
+
+            elif answer == '3':
+                print(lc.TXT_YEAR, end=' ')
+                year = int(input())
+                count_book_by_year(year, data_books)
+                break
+
+            elif answer == '4':
+                average_price(data_books)
+                break
+
+            elif answer == '5':
+                print(lc.TXT_PUBLISHER, end=' ')
+                publisher = input()
+                print(lc.TXT_YEAR, end=' ')
+                year = int(input())
+                most_expensive(publisher, year, data_books)
+                break
+
+            else:
+                print(lc.TXT_ERROR)
+                print('-' * 100)
+
+        print('-' * 100)
+        print(lc.TXT_EXIT)
+
+        answer = input()
+        print('-' * 100)
+        if answer == '1':
+            pass
+
+        else:
+            break
+
+
+language = input('Choose your language:\n1. English\n2. Russian\n').lower()
+while True:
+    if language == 'english' or language == 'eng' or \
+            language == 'e' or language == '1':
+        import lc_eng as lc
+        break
+
+    elif language == 'russian' or language == 'rus' or \
+            language == 'r' or language == '2':
+        import lc_rus as lc
+        break
+    language = input('Please, choose language from proposed: ')
+print()
 
 main()
